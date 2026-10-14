@@ -1,0 +1,76 @@
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid #b5c7ff;
+  outline-offset: 3px;
+}
+
+.scrim {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+}
+
+.connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #91a3bc;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.connection i,
+footer > span:nth-child(2) i {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #48d7a0;
+}
+
+.connection.offline,
+.system-status.offline strong {
+  color: #ff9ba3;
+}
+
+.connection.offline i,
+.system-status.offline > i,
+footer > span:nth-child(2) i.offline {
+  background: #ff8c96;
+  box-shadow: 0 0 0 3px #ff8c9617;
+}
+
+.table-incident-link {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.table-incident-link:hover strong {
+  color: #b4c8ff;
+}
+
+.system-status.offline {
+  border-color: #57343d;
+  background: #291b2355;
+}
+
+@media (max-width: 420px) {
+  .connection {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
