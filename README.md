@@ -1,77 +1,357 @@
-# IncidentIQ
+# IncidentIQ — IT Incident Management Platform
 
-Enterprise-style IT incident management built with Java 21, Spring Boot, React, TypeScript and MySQL 8.4.
+A full-stack IT incident management application designed to help teams report, track, assign, and resolve technical incidents through a centralized interface.
+
+Built with **Java 21, Spring Boot, React, TypeScript, MySQL, JWT Authentication, and Docker Compose**, IncidentIQ demonstrates modern full-stack development, REST API design, database management, and containerized deployment.
+
+<p align="center">
+
+  **IncidentIQ | Manage incidents. Improve resolution.**
+
+</p>
+
+---
+
+## Overview
+
+IncidentIQ provides a centralized platform for managing IT support incidents throughout their lifecycle. It is designed as a portfolio project demonstrating practical software engineering concepts, including layered backend architecture, secure API access, relational database persistence, and a modern web frontend.
+
+**GitHub Repository:** https://github.com/Mohammedkhalandar/IncidentIQ
+
+## Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Backend | Java 21, Spring Boot 3.4.5 |
+| Frontend | React, TypeScript, Vite |
+| Database | MySQL 8.4 |
+| Authentication | Spring Security, JWT |
+| Database migrations | Flyway |
+| API documentation | OpenAPI, Swagger UI |
+| Containerization | Docker, Docker Compose |
+| Build tools | Maven, npm |
 
 ## Features
-- JWT login and roles: ADMIN, SUPPORT_LEAD, ENGINEER, REPORTER
-- Incident intake, search, filters, pagination, assignment, lifecycle transitions, comments and audit timeline
-- Priority-based response/resolution deadlines and scheduled SLA breach checks
-- Workspace dashboard, team directory, reports and SLA policy views
-- MySQL with Flyway migrations, Swagger/OpenAPI, health endpoint and Docker Compose
 
-## Run with Docker
-Install and start Docker Desktop, then from this directory run:
-```powershell
-.\start-incidentiq.ps1
-```
-Or use `docker compose up --build`. Stop with `.\stop-incidentiq.ps1` or `docker compose down`; neither command removes the database volume.
-Open http://localhost:5173 (UI), http://localhost:8081/swagger-ui/index.html (API docs), and http://localhost:8081/actuator/health.
+### Incident Management
+- Create and view IT incidents.
+- Track incident status and priority.
+- Assign incidents to team members.
+- Update incident details and follow the resolution workflow.
+- Maintain incident history for supported actions.
 
-The local development profile seeds demo users and sample incidents. Demo logins (local development only):
-- `admin@incidentiq.local` / `IncidentIQ@123`
-- `engineer@incidentiq.local` / `IncidentIQ@123`
-- `reporter@incidentiq.local` / `IncidentIQ@123`
+### Authentication and Security
+- JWT-based authentication.
+- Protected API endpoints.
+- Role-aware access control.
+- Secure password hashing through the backend authentication implementation.
 
-## Production Compose profile
-Create a protected `.env` file (do not commit it) and set `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD`, `JWT_SECRET` (at least 32 random bytes), and `CORS_ALLOWED_ORIGINS` to trusted HTTPS origins. Then run:
-```powershell
-docker compose -f docker-compose.prod.yml up --build -d
-```
-The production profile disables demo seeding and API documentation, does not publish the database or backend ports, and serves the UI through Nginx. Before first use, provision the initial operator account and reference data through your approved database-provisioning process; this starter does not include an account-registration endpoint or production bootstrap account. Put the published UI behind a TLS-terminating reverse proxy before exposing it publicly. The profile is a deployment example, not a production security certification.
+### Dashboard and User Experience
+- Centralized incident management interface.
+- Incident status and priority visibility.
+- User and team information.
+- React and TypeScript frontend architecture.
 
-For a local production-profile instance alongside the development stack, use an ignored `.env.local` file with unique local secrets, `CORS_ALLOWED_ORIGINS=http://localhost:5175`, and `FRONTEND_PORT=5175`:
-```powershell
-docker compose --env-file .env.local -p incidentiq-local-prod -f docker-compose.prod.yml up --build -d
-```
-Open http://localhost:5175. This loopback-only HTTP instance is for local use, not public exposure. Its generated local operator email and password are stored in `.env.local` as `INCIDENTIQ_ADMIN_EMAIL` and `INCIDENTIQ_ADMIN_PASSWORD`; keep that file private. Stop the instance without deleting its database using:
-```powershell
-docker compose --env-file .env.local -p incidentiq-local-prod -f docker-compose.prod.yml down
-```
+### Developer Experience
+- RESTful backend APIs.
+- Interactive Swagger API documentation.
+- Versioned database schema management using Flyway.
+- Docker Compose-based local environment.
+- Persistent MySQL storage.
 
-## Run without Docker
-Backend: JDK 21, Maven 3.9+, MySQL 8.4; create database `incidentiq`, then run `cd backend && mvn spring-boot:run`.
-Frontend: Node.js 20+, run `cd frontend && npm install && npm run dev`.
-For direct backend runs, set `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, and `CORS_ALLOWED_ORIGINS` as environment variables as needed.
-
-## Tests
-Run backend tests with `cd backend && mvn verify`; the API integration tests use Testcontainers and MySQL 8.4 when Docker is available. For browser tests, install frontend dependencies and Chromium, then start a dedicated Compose project so tests do not modify the regular development database:
-```powershell
-$env:MYSQL_PORT = "3309"
-$env:BACKEND_PORT = "8082"
-$env:FRONTEND_PORT = "5174"
-$env:CORS_ALLOWED_ORIGINS = "http://localhost:5174"
-docker compose -p incidentiq-e2e-validation up --build -d
-Set-Location frontend
-npm ci
-npx playwright install chromium
-npm run test:e2e
-Set-Location ..
-docker compose -p incidentiq-e2e-validation down
-```
-This leaves the dedicated test volume intact and does not touch the normal development volume. Run the frontend production type-check/build with `cd frontend && npm ci && npm run build`.
-
-## API
-Base path `/api/v1`; login via `POST /auth/login`, then use `Authorization: Bearer <token>`.
-- `GET /auth/me`
-- `GET /dashboard/summary`
-- `GET /incidents?status=OPEN&priority=CRITICAL&search=portal&page=0&size=10`
-- `POST /incidents`, `GET /incidents/{id}`, `PATCH /incidents/{id}`
-- `POST /incidents/{id}/assign`, `POST /incidents/{id}/transition`
-- `GET/POST /incidents/{id}/comments`, `GET /incidents/{id}/history`
-- `GET /users`, `GET /teams`, `GET /sla/policies`
+> Features should be considered implemented only where supported by the current application code. Advanced SLA tracking, notifications, analytics, and other planned capabilities should be documented separately until implemented and tested.
 
 ## Architecture
-Modular monolith: controllers handle HTTP, services enforce business rules, repositories persist data, Flyway owns schema migrations, and a scheduled job checks SLA breaches. Docker Compose starts MySQL, API and Vite frontend.
 
-## Important
-This is a portfolio project starter, not a certified production service. Change demo credentials and JWT secret before public deployment. Configure HTTPS, restrictive CORS, rate limiting, secret management, notification retries, and review data privacy before real-world use.
+```mermaid
+flowchart TD
+    U[User] --> F[React + TypeScript Frontend]
+    F -->|HTTP REST API| B[Spring Boot Backend]
+    B --> S[Spring Security + JWT]
+    B --> L[Business Logic]
+    L --> D[MySQL Database]
+    D --> M[Flyway Migrations]
+    B --> A[OpenAPI / Swagger]
+```
+
+### Project Structure
+
+```text
+IncidentIQ/
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/incidentiq/
+│   │   │   └── resources/
+│   │   └── test/
+│   ├── Dockerfile
+│   └── pom.xml
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+The exact directory contents may evolve as the application develops.
+
+## Prerequisites
+
+Install the following tools:
+
+- [Git](https://git-scm.com/downloads)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Java 21](https://adoptium.net/) and Maven if running the backend outside Docker.
+- [Node.js LTS](https://nodejs.org/) if running the frontend outside Docker.
+
+Docker Desktop is the simplest way to run the full application locally.
+
+## Run with Docker Compose
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Mohammedkhalandar/IncidentIQ.git
+cd IncidentIQ
+```
+
+### 2. Start Docker Desktop
+
+Make sure Docker Desktop is running.
+
+Verify the installation:
+
+```bash
+docker --version
+docker compose version
+```
+
+### 3. Start the application
+
+```bash
+docker compose up --build -d
+```
+
+Check the running containers:
+
+```bash
+docker compose ps
+```
+
+View backend logs:
+
+```bash
+docker compose logs -f backend
+```
+
+View frontend logs:
+
+```bash
+docker compose logs -f frontend
+```
+
+View database logs:
+
+```bash
+docker compose logs -f mysql
+```
+
+### 4. Open the application
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend | http://localhost:8081 |
+| Swagger UI | http://localhost:8081/swagger-ui/index.html |
+| OpenAPI JSON | http://localhost:8081/v3/api-docs |
+
+The current local Docker configuration uses host port `3308` for MySQL and container port `3306` internally.
+
+### 5. Stop the application
+
+```bash
+docker compose down
+```
+
+This stops and removes the containers while preserving the named MySQL volume.
+
+**Avoid `docker compose down -v` unless you intentionally want to delete the persistent database volume.**
+
+## Configuration
+
+The application uses environment-based configuration for database connectivity, JWT signing, CORS, and demo-data seeding.
+
+Typical configuration variables include:
+
+| Variable | Purpose |
+|---|---|
+| `DB_URL` | JDBC connection URL |
+| `DB_USERNAME` | Database username |
+| `DB_PASSWORD` | Database password |
+| `JWT_SECRET` | JWT signing secret |
+| `CORS_ALLOWED_ORIGINS` | Permitted frontend origins |
+| `SEED_DEMO_DATA` | Controls demo-data initialization |
+
+Use the values and defaults supported by your actual application configuration.
+
+For local development, you may create a `.env` file if your Compose configuration is set up to read it. Keep real `.env` files out of Git and provide a sanitized `.env.example` for other developers.
+
+**Production security requirements:**
+- Generate a strong, unique JWT signing secret.
+- Use unique database credentials.
+- Do not use development credentials in production.
+- Disable demo-data seeding.
+- Configure trusted CORS origins.
+- Use HTTPS in production.
+- Keep database access private.
+- Back up the database regularly.
+
+## API Documentation
+
+Swagger UI provides an interactive interface for exploring and testing available backend endpoints.
+
+Open:
+
+http://localhost:8081/swagger-ui/index.html
+
+The OpenAPI specification is available at:
+
+http://localhost:8081/v3/api-docs
+
+The API uses JWT Bearer authentication for protected endpoints.
+
+Typical authentication workflow:
+
+1. Submit credentials to the login endpoint.
+2. Obtain the access token from the successful response.
+3. Authorize requests using the Swagger **Authorize** control.
+4. Call protected endpoints using the token.
+
+For endpoints and request schemas, refer to the generated OpenAPI specification rather than assuming every conventional endpoint is implemented.
+
+## Database and Migrations
+
+IncidentIQ uses MySQL for persistent application data and Flyway for database schema migrations.
+
+Database data is persisted through the configured Docker volume.
+
+To inspect migration and database startup logs:
+
+```bash
+docker compose logs backend
+docker compose logs mysql
+```
+
+Keep existing migration files intact after they have been applied. Introduce new migration files for future schema changes.
+
+## Development Workflow
+
+### Backend
+
+From the `backend` directory:
+
+```bash
+mvn test
+mvn clean package
+```
+
+These commands require a compatible Java 21 and Maven installation. Tests may require a configured test database or other dependencies depending on the existing test suite.
+
+### Frontend
+
+From the `frontend` directory:
+
+```bash
+npm install
+npm run
+```
+
+Use the scripts listed by `npm run` to identify the available development, linting, testing, and build commands. For example, if the project defines the standard Vite scripts:
+
+```bash
+npm run dev
+npm run build
+```
+
+Run the frontend against the configured backend API URL.
+
+## Testing Checklist
+
+Before releasing a new version, verify:
+
+- [ ] Docker Compose configuration validates successfully.
+- [ ] MySQL starts and becomes healthy.
+- [ ] Backend starts without errors.
+- [ ] Flyway migrations complete successfully.
+- [ ] Frontend builds successfully.
+- [ ] Valid credentials authenticate successfully.
+- [ ] Invalid credentials are rejected.
+- [ ] Protected endpoints reject unauthenticated requests.
+- [ ] Authorized users can perform permitted incident operations.
+- [ ] Unauthorized role operations are rejected.
+- [ ] Incident status changes and assignment history persist correctly.
+- [ ] Restarting containers preserves database data.
+- [ ] No secrets are tracked by Git.
+
+## Production Deployment
+
+The Docker Compose setup is intended to provide a convenient local development environment. A public production deployment requires additional verification and configuration.
+
+Recommended production improvements include:
+
+- Production-specific Compose configuration or an appropriate hosting platform.
+- HTTPS termination and secure browser-to-API communication.
+- External secret management.
+- Production frontend API URL configuration.
+- Restricted database networking.
+- Health and readiness checks.
+- Structured logging and monitoring.
+- Database backup and restore procedures.
+- Automated CI checks and release builds.
+- Security and dependency vulnerability reviews.
+
+Do not consider the application production-ready until these controls have been implemented and verified for the chosen deployment environment.
+
+## Roadmap
+
+Potential future enhancements include:
+
+- Service-level agreement (SLA) tracking and breach alerts.
+- Email and in-app notifications.
+- Advanced incident search and filtering.
+- Rich analytics and reporting.
+- Team workload dashboards.
+- Incident comments and collaboration.
+- Audit and compliance reporting.
+- Automated CI/CD workflows.
+- Cloud deployment and monitoring integrations.
+
+These items represent planned enhancements, not a claim that they are already implemented.
+
+## Contributing
+
+Contributions and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Implement the change with appropriate tests.
+4. Run the relevant checks.
+5. Submit a pull request describing the change.
+
+## Author
+
+**Mohammed Khalandar**
+
+GitHub: https://github.com/Mohammedkhalandar
+
+## License
+
+A license has not been specified here. Add a `LICENSE` file and update this section once you choose the appropriate license.
+
+---
+
+*IncidentIQ — A full-stack software engineering portfolio project focused on IT incident management, secure APIs, and modern web application development.*
